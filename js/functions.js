@@ -3,33 +3,17 @@ function checkStringLenght(string) {
     console.log('Аргумент должен быть строкой!');
     return false;
   }
-  if (string.length < 10) {
-    return false;
-  } else {
-    return true;
-  }
+  return string.length < 10;
 }
 
 console.log(checkStringLenght('Я строка!!!'));
 
 
 function checkPalindrom(string) {
-  let oldString = string.toLowerCase();
-  let newString = string.split('').reverse().join('').replace(' ','').toLowerCase();
+  const oldString = string.toLowerCase().replaceAll(' ','');
+  const newString = string.split('').reverse().join('').replace(' ','').toLowerCase().replaceAll(' ','');
 
-  while(oldString.includes(' ')) {
-    oldString = oldString.replace(' ','');
-  }
-
-  while(newString.includes(' ')) {
-    newString = newString.replace(' ','');
-  }
-
-  if (oldString === newString) {
-    return true;
-  } else {
-    return false;
-}
+  return oldString === newString;
 }
 
 console.log(checkPalindrom('Лёша на полке клопа нашёл '));
