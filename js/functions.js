@@ -17,3 +17,17 @@ function checkPalindrom(string) {
 }
 
 console.log(checkPalindrom('Лёша на полке клопа нашёл '));
+
+function takeNum(param) {
+  let result = '';
+  for (let i=0; i<param.length; i++) {
+      if (String(+param[i]) != 'NaN') result += param[i];
+  }
+  return (result == 0) ? NaN : +result.replaceAll(' ','');
+}
+
+console.log(takeNum('2023 год'));
+console.log(takeNum('ECMAScript 2022'));
+console.log(takeNum('1 кефир 0.5 батона'));
+console.log(takeNum('агент 007'));
+console.log(takeNum('а я томат'));
