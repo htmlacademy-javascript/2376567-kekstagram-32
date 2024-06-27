@@ -39,15 +39,15 @@ const ARR_DESCRIPTIONS = [
   'закат и пляж'
 ];
 
-function createUrl(num) {
-  return `img/avatar-${num}.svg`;
+function createUrl(path,num,extension) {
+  return `${path}${num}.${extension}`;
 }
 
 const createComments = function(min,max){
   const arr = [];
   for (let i = min; i < max; i++) {
     const keys = ['id','avatar','message','name'];
-    const values = makeArr(i,createUrl(getRandomInt(1,6)),returnRandomElem(ARR_MESSAGES),returnRandomElem(ARR_NAMES));
+    const values = makeArr(i,createUrl('img/avatar-',getRandomInt(1,6),'svg'),returnRandomElem(ARR_MESSAGES),returnRandomElem(ARR_NAMES));
     const item = makeObj(keys,values);
     arr.push(item);
   }
@@ -58,7 +58,7 @@ const createContent = function(min,max) {
   const arr = [];
   for (let i = min; i <= max; i++) {
     const keys = ['id','url','description','likes','comments'];
-    const values = makeArr(i,createUrl(i),returnRandomElem(ARR_DESCRIPTIONS),getRandomInt(15, 200),createComments(0,getRandomInt(0,30)));
+    const values = makeArr(i,createUrl('photos/',i,'jpg'),returnRandomElem(ARR_DESCRIPTIONS),getRandomInt(15, 200),createComments(0,getRandomInt(0,30)));
     const item = makeObj(keys,values);
     arr.push(item);
   }
