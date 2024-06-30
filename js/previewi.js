@@ -25,5 +25,3 @@ const getListContent = (content) => {
 };
 
 picturesContainer.appendChild(getListContent(data));
-
-console.log('модуль preview.js подключен');
