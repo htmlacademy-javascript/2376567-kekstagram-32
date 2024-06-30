@@ -23,6 +23,4 @@ const makeArr = function(...arg) {
   return arr;
 };
 
-console.log('модуль util.js подключен');
-
 export {getRandomInt, returnRandomElem, makeObj, makeArr};
