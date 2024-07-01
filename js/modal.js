@@ -1,6 +1,8 @@
 import {data} from './preview.js';
 import {getRandomInt} from './util.js';
 
+// console.log(data);
+
 const pictureLink = document.querySelectorAll('.picture__link');
 const bigPicture = document.querySelector('.big-picture');
 
@@ -9,10 +11,16 @@ const socialCaption = bigPicture.querySelector('.social__caption');
 const likesCount = bigPicture.querySelector('.likes-count');
 const socialPicture = bigPicture.querySelector('.social__picture');
 const socialCommentTotalCount = bigPicture.querySelector('.social__comment-total-count');
-// const socialText = bigPicture.querySelector('.social__text');
+
 const socialComments = bigPicture.querySelector('.social__comments');
 
 const pictureCancel = document.querySelector('#picture-cancel');
+
+// const buttonCommentsLoader = document.querySelector('button.comments-loader');
+
+// const commentsList = document.getElementsByClassName('social__comment');
+
+const body = document.querySelector('body');
 
 const makeCommentBlock = (avatarSrc,commentatorName,commentText) => {
   const listItem = document.createElement('li');
@@ -31,20 +39,31 @@ const getListComment = (content) => {
   return fragment;
 };
 
+const renderComments = (index) => {
+  socialPicture.src = data[index].comments[getRandomInt(1,data[index].comments.length)].avatar;
+  socialCommentTotalCount.textContent = data[index].comments.length;
+  socialComments.textContent = null;
+  socialComments.appendChild(getListComment(data[index].comments));
+};
+
+const renderSocials = (index) => {
+  socialCaption.textContent = data[index].description;
+  likesCount.textContent = data[index].likes;
+};
+
+const renderPictures = (index) => {
+  bigPictureImg.src = data[index].url;
+};
+
 const loadModal = () => {
   for (let i = 0; i < pictureLink.length; i++) {
     pictureLink[i].addEventListener('click', (event) => {
       event.preventDefault();
       bigPicture.classList.remove('hidden');
-      bigPictureImg.src = data[i].url;
-      socialCaption.textContent = data[i].description;
-      likesCount.textContent = data[i].likes;
-      socialPicture.src = data[i].comments[getRandomInt(1,pictureLink.length)].avatar;
-      socialCommentTotalCount.textContent = data[i].comments.length;
-      socialComments.textContent = null;
-      socialComments.appendChild(getListComment(data[i].comments));
-
-      document.querySelector('body').classList.add('modal-open');//1.переделать через переменную 2.доделать чтобы при закрытии модалки класс убирался
+      renderPictures(i);
+      renderSocials(i);
+      renderComments(i);
+      body.classList.add('modal-open');
       document.querySelector('.social__comment-count').classList.add('hidden');//удалить
       document.querySelector('button.comments-loader').classList.add('hidden');//удалить
     });
@@ -63,7 +82,4 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-
 loadModal();
-
-
