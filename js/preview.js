@@ -6,6 +6,7 @@ const picturesContainer = document.querySelector('.pictures');
 
 const makePictureBlock = (imgLink,description,commentsValue,likeValue) => {
   const newPicture = document.createElement('a');
+  newPicture.classList.add('picture__link');
   newPicture.href = '#';
   newPicture.innerHTML = `<img class="picture__img" src="${imgLink}" width="182" height="182" alt="${description}">
         <p class="picture__info">
@@ -25,3 +26,7 @@ const getListContent = (content) => {
 };
 
 picturesContainer.appendChild(getListContent(data));
+
+export {data};
+
+console.log('модуль preview.js подключен');

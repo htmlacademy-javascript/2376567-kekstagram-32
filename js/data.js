@@ -65,4 +65,6 @@ const createContent = function(min,max) {
   return arr;
 };
 
+console.log('модуль data.js подключен');
+
 export {createContent};
