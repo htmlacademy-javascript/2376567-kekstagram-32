@@ -1,9 +1,5 @@
-import {data} from './preview.js';
-import {getRandomInt} from './util.js';
+import {getRandomInt, isEscKey} from './util.js';
 
-// console.log(data);
-
-const pictureLink = document.querySelectorAll('.picture__link');
 const bigPicture = document.querySelector('.big-picture');
 
 const bigPictureImg = bigPicture.querySelector('.big-picture__img img');
@@ -11,6 +7,7 @@ const socialCaption = bigPicture.querySelector('.social__caption');
 const likesCount = bigPicture.querySelector('.likes-count');
 const socialPicture = bigPicture.querySelector('.social__picture');
 const socialCommentTotalCount = bigPicture.querySelector('.social__comment-total-count');
+const container = document.querySelector('.pictures');
 
 const socialComments = bigPicture.querySelector('.social__comments');
 
@@ -32,54 +29,55 @@ const makeCommentBlock = (avatarSrc,commentatorName,commentText) => {
 
 const getListComment = (content) => {
   const fragment = new DocumentFragment();
-  for (let i = 0; i < content.length; i++) {
-    const comments = makeCommentBlock(content[i].avatar,content[i].name,content[i].message);
-    fragment.append(comments);
-  }
+  const comments = content.map(((item) => makeCommentBlock(item.avatar,item.name,item.message)));
+  comments.forEach((comment) => fragment.append(comment));
   return fragment;
 };
 
-const renderComments = (index) => {
+const renderComments = (data,index) => {
   socialPicture.src = data[index].comments[getRandomInt(1,data[index].comments.length)].avatar;
   socialCommentTotalCount.textContent = data[index].comments.length;
   socialComments.textContent = null;
   socialComments.appendChild(getListComment(data[index].comments));
 };
 
-const renderSocials = (index) => {
+const renderSocials = (data,index) => {
   socialCaption.textContent = data[index].description;
   likesCount.textContent = data[index].likes;
 };
 
-const renderPictures = (index) => {
+const renderPictures = (data,index) => {
   bigPictureImg.src = data[index].url;
 };
 
-const loadModal = () => {
-  for (let i = 0; i < pictureLink.length; i++) {
-    pictureLink[i].addEventListener('click', (event) => {
-      event.preventDefault();
-      bigPicture.classList.remove('hidden');
-      renderPictures(i);
-      renderSocials(i);
-      renderComments(i);
-      body.classList.add('modal-open');
-      document.querySelector('.social__comment-count').classList.add('hidden');//удалить
-      document.querySelector('button.comments-loader').classList.add('hidden');//удалить
-    });
-  }
-};
+const onLoadModal = (evt) => (isEscKey(evt)) ? closeModal() : closeModal();
 
-pictureCancel.addEventListener('click', () => {
+function closeModal() {
   bigPicture.classList.add('hidden');
   document.querySelector('body').classList.remove('modal-open');
-});
+  document.removeEventListener('keydown', onLoadModal);
+}
 
-document.addEventListener('keydown', (event) => {
-  if (event.keyCode === 27) {
-    bigPicture.classList.add('hidden');
-    document.querySelector('body').classList.remove('modal-open');
-  }
-});
+const loadModal = (data) => {
+  container.addEventListener('click', (event) => {
+    const parentLink = event.target.closest('a.picture');
+    if (parentLink) {
+      const id = Number(parentLink.dataset.id);
+      event.preventDefault();
+      bigPicture.classList.remove('hidden');
+      renderPictures(data,id);
+      renderSocials(data,id);
+      renderComments(data,id);
+      body.classList.add('modal-open');
 
-loadModal();
+      document.addEventListener('keydown', onLoadModal);
+
+      pictureCancel.addEventListener('click', onLoadModal);
+
+      document.querySelector('.social__comment-count').classList.add('hidden');//удалить
+      document.querySelector('button.comments-loader').classList.add('hidden');//удалить
+    }
+  });
+};
+
+export { loadModal };

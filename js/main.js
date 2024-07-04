@@ -1,3 +1,8 @@
-import './preview.js';
-import './modal.js';
+import { createContent } from './data.js';
+import { picturesApped } from './preview.js';
+import { loadModal } from './modal.js';
 
+const data = createContent(1,25);
+
+picturesApped(data);
+loadModal(data);
