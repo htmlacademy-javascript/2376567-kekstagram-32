@@ -13,11 +13,17 @@ const socialComments = bigPicture.querySelector('.social__comments');
 
 const pictureCancel = document.querySelector('#picture-cancel');
 
-// const buttonCommentsLoader = document.querySelector('button.comments-loader');
+const buttonCommentsLoader = document.querySelector('button.comments-loader');
 
-// const commentsList = document.getElementsByClassName('social__comment');
+const commentsList = document.getElementsByClassName('social__comment');
 
 const body = document.querySelector('body');
+
+//
+
+let visibleComments = 5;
+
+const stepShownComments = 5;
 
 const makeCommentBlock = (avatarSrc,commentatorName,commentText) => {
   const listItem = document.createElement('li');
@@ -35,10 +41,17 @@ const getListComment = (content) => {
 };
 
 const renderComments = (data,index) => {
-  socialPicture.src = data[index].comments[getRandomInt(1,data[index].comments.length)].avatar;
+  const dataAvatarPath = data[index]?.comments[getRandomInt(0,data[index]?.comments.length)]?.avatar;
+  const url = dataAvatarPath ? dataAvatarPath : 'img/avatar-1.svg';
+  socialPicture.src = url;
   socialCommentTotalCount.textContent = data[index].comments.length;
   socialComments.textContent = null;
   socialComments.appendChild(getListComment(data[index].comments));
+
+  for(let i = visibleComments; i < commentsList.length; i++) {
+    commentsList[i].classList.add('hidden');
+  }
+
 };
 
 const renderSocials = (data,index) => {
@@ -50,12 +63,39 @@ const renderPictures = (data,index) => {
   bigPictureImg.src = data[index].url;
 };
 
-const onLoadModal = (evt) => (isEscKey(evt)) ? closeModal() : closeModal();
+
+const onLoadEscClose = (evt) => {
+  if (isEscKey(evt)) {
+    closeModal();
+  }
+};
+
+const onLoadButtonClose = () => {
+  closeModal();
+};
+
+function onfunc() {
+
+  for(let i = visibleComments; i < visibleComments + stepShownComments && i < commentsList.length; i++) {
+    commentsList[i].classList.remove('hidden');
+  }
+  visibleComments += stepShownComments;
+  if(visibleComments >= commentsList.length) {
+    buttonCommentsLoader.classList.add('hidden');
+    visibleComments = 5;
+  }
+}
 
 function closeModal() {
+  const socialPicture = bigPicture.querySelector('.social__picture');
   bigPicture.classList.add('hidden');
   document.querySelector('body').classList.remove('modal-open');
-  document.removeEventListener('keydown', onLoadModal);
+  document.removeEventListener('keydown', onLoadEscClose);
+  pictureCancel.removeEventListener('click', onLoadButtonClose);
+  buttonCommentsLoader.removeEventListener('click', onfunc);
+  socialPicture.textContent = null;
+  buttonCommentsLoader.classList.remove('hidden');
+  // visibleComments = 5;
 }
 
 const loadModal = (data) => {
@@ -70,12 +110,15 @@ const loadModal = (data) => {
       renderComments(data,id);
       body.classList.add('modal-open');
 
-      document.addEventListener('keydown', onLoadModal);
+      document.addEventListener('keydown', onLoadEscClose);
 
-      pictureCancel.addEventListener('click', onLoadModal);
+      pictureCancel.addEventListener('click', onLoadButtonClose);
 
-      document.querySelector('.social__comment-count').classList.add('hidden');//удалить
-      document.querySelector('button.comments-loader').classList.add('hidden');//удалить
+      buttonCommentsLoader.addEventListener('click', onfunc);
+
+      // document.querySelector('.social__comment-count').classList.add('hidden');//удалить
+      // document.querySelector('button.comments-loader').classList.add('hidden');//удалить
+
     }
   });
 };
