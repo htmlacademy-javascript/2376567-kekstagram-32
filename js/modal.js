@@ -1,32 +1,29 @@
 import {getRandomInt, isEscKey} from './util.js';
 
 const bigPicture = document.querySelector('.big-picture');
-
 const bigPictureImg = bigPicture.querySelector('.big-picture__img img');
-const socialCaption = bigPicture.querySelector('.social__caption');
+
 const likesCount = bigPicture.querySelector('.likes-count');
+
+const socialCaption = bigPicture.querySelector('.social__caption');
 const socialPicture = bigPicture.querySelector('.social__picture');
 const socialCommentTotalCount = bigPicture.querySelector('.social__comment-total-count');
 const socialCommentShownCount = bigPicture.querySelector('.social__comment-shown-count');
-const container = document.querySelector('.pictures');
-
+const socialCommentCountBlock = bigPicture.querySelector('.social__comment-count');
 const socialComments = bigPicture.querySelector('.social__comments');
+const commentsList = document.getElementsByClassName('social__comment');
+
+const container = document.querySelector('.pictures');
 
 const pictureCancel = document.querySelector('#picture-cancel');
 
 const buttonCommentsLoader = document.querySelector('button.comments-loader');
 
-const commentsList = document.getElementsByClassName('social__comment');
-
 const body = document.querySelector('body');
 
-//
+const STEP_SHOWN_COMMENTS = 5;
 
 let visibleComments = 5;
-
-const stepShownComments = 5;
-
-let visibleCommentsCount = 0;
 
 const makeCommentBlock = (avatarSrc,commentatorName,commentText) => {
   const listItem = document.createElement('li');
@@ -43,6 +40,17 @@ const getListComment = (content) => {
   return fragment;
 };
 
+
+const hideComments = (id) => {
+  commentsList[id].classList.add('hidden');
+};
+
+const showComments = (id) => {
+  commentsList[id].classList.remove('hidden');
+};
+
+const getNumberOfItems = (elem, clss) => Array.from(elem).filter((comment) => comment.classList.contains(clss) && comment.classList.length === 1).length;
+
 const renderComments = (data,index) => {
   const dataAvatarPath = data[index]?.comments[getRandomInt(0,data[index]?.comments.length)]?.avatar;
   const url = dataAvatarPath ? dataAvatarPath : 'img/avatar-1.svg';
@@ -50,19 +58,15 @@ const renderComments = (data,index) => {
   socialCommentTotalCount.textContent = data[index].comments.length;
   socialComments.textContent = null;
   socialComments.appendChild(getListComment(data[index].comments));
-  //
-  for(let i = visibleComments; i < commentsList.length; i++) {
-    commentsList[i].classList.add('hidden');
-    if(commentsList[i].classList.contains('hidden')) {
-      visibleCommentsCount += 1;
-    }
-  }
-  socialCommentShownCount.textContent = Number(socialCommentTotalCount.textContent) - visibleCommentsCount;
-
+  Array.from(commentsList).slice(visibleComments).forEach((_, i) => {
+    hideComments(i + visibleComments);
+  });
+  const shownComments = getNumberOfItems(commentsList,'social__comment');
+  socialCommentShownCount.textContent = shownComments;
   if(visibleComments >= commentsList.length) {
     buttonCommentsLoader.classList.add('hidden');
+    socialCommentCountBlock.classList.add('hidden');
   }
-  //
 };
 
 const renderSocials = (data,index) => {
@@ -74,6 +78,20 @@ const renderPictures = (data,index) => {
   bigPictureImg.src = data[index].url;
 };
 
+const showNextComments = () => {
+  Array.from(commentsList).slice(visibleComments, visibleComments + STEP_SHOWN_COMMENTS).forEach((_, i) => {
+    showComments(i + visibleComments);
+  });
+
+  visibleComments += STEP_SHOWN_COMMENTS;
+
+  if(visibleComments >= commentsList.length) {
+    buttonCommentsLoader.classList.add('hidden');
+    visibleComments = 5;
+  }
+  const shownComments = getNumberOfItems(commentsList,'social__comment');
+  socialCommentShownCount.textContent = shownComments;
+};
 
 const onLoadEscClose = (evt) => {
   if (isEscKey(evt)) {
@@ -85,27 +103,25 @@ const onLoadButtonClose = () => {
   closeModal();
 };
 
-function onfunc() {
-
-  for(let i = visibleComments; i < visibleComments + stepShownComments && i < commentsList.length; i++) {
-    commentsList[i].classList.remove('hidden');
-  }
-  visibleComments += stepShownComments;
-  if(visibleComments >= commentsList.length) {
-    buttonCommentsLoader.classList.add('hidden');
-    visibleComments = 5;
-  }
+function onLoadComments() {
+  showNextComments();
 }
 
 function closeModal() {
-  const socialPicture = bigPicture.querySelector('.social__picture');
   bigPicture.classList.add('hidden');
-  document.querySelector('body').classList.remove('modal-open');
+
+  body.classList.remove('modal-open');
+
   document.removeEventListener('keydown', onLoadEscClose);
+
   pictureCancel.removeEventListener('click', onLoadButtonClose);
-  buttonCommentsLoader.removeEventListener('click', onfunc);
+
+  buttonCommentsLoader.removeEventListener('click', onLoadComments);
+
   buttonCommentsLoader.classList.remove('hidden');
+  socialCommentCountBlock.classList.remove('hidden');
   socialPicture.textContent = null;
+  visibleComments = 5;
 }
 
 const loadModal = (data) => {
@@ -124,11 +140,7 @@ const loadModal = (data) => {
 
       pictureCancel.addEventListener('click', onLoadButtonClose);
 
-      buttonCommentsLoader.addEventListener('click', onfunc);
-
-      // document.querySelector('.social__comment-count').classList.add('hidden');//удалить
-      // document.querySelector('button.comments-loader').classList.add('hidden');//удалить
-
+      buttonCommentsLoader.addEventListener('click', onLoadComments);
     }
   });
 };
