@@ -7,6 +7,7 @@ const socialCaption = bigPicture.querySelector('.social__caption');
 const likesCount = bigPicture.querySelector('.likes-count');
 const socialPicture = bigPicture.querySelector('.social__picture');
 const socialCommentTotalCount = bigPicture.querySelector('.social__comment-total-count');
+const socialCommentShownCount = bigPicture.querySelector('.social__comment-shown-count');
 const container = document.querySelector('.pictures');
 
 const socialComments = bigPicture.querySelector('.social__comments');
@@ -24,6 +25,8 @@ const body = document.querySelector('body');
 let visibleComments = 5;
 
 const stepShownComments = 5;
+
+let visibleCommentsCount = 0;
 
 const makeCommentBlock = (avatarSrc,commentatorName,commentText) => {
   const listItem = document.createElement('li');
@@ -47,11 +50,19 @@ const renderComments = (data,index) => {
   socialCommentTotalCount.textContent = data[index].comments.length;
   socialComments.textContent = null;
   socialComments.appendChild(getListComment(data[index].comments));
-
+  //
   for(let i = visibleComments; i < commentsList.length; i++) {
     commentsList[i].classList.add('hidden');
+    if(commentsList[i].classList.contains('hidden')) {
+      visibleCommentsCount += 1;
+    }
   }
+  socialCommentShownCount.textContent = Number(socialCommentTotalCount.textContent) - visibleCommentsCount;
 
+  if(visibleComments >= commentsList.length) {
+    buttonCommentsLoader.classList.add('hidden');
+  }
+  //
 };
 
 const renderSocials = (data,index) => {
@@ -93,9 +104,8 @@ function closeModal() {
   document.removeEventListener('keydown', onLoadEscClose);
   pictureCancel.removeEventListener('click', onLoadButtonClose);
   buttonCommentsLoader.removeEventListener('click', onfunc);
-  socialPicture.textContent = null;
   buttonCommentsLoader.classList.remove('hidden');
-  // visibleComments = 5;
+  socialPicture.textContent = null;
 }
 
 const loadModal = (data) => {
