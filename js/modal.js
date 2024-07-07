@@ -58,6 +58,7 @@ const renderComments = (data,index) => {
   socialCommentTotalCount.textContent = data[index].comments.length;
   socialComments.textContent = null;
   socialComments.appendChild(getListComment(data[index].comments));
+
   Array.from(commentsList).slice(visibleComments).forEach((_, i) => {
     hideComments(i + visibleComments);
   });
