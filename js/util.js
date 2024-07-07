@@ -1,26 +1,16 @@
-const getRandomInt = function(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+const returnRandomElem = (arr) => arr[getRandomInt(0, arr.length - 1)];
+
+const makeObj = (keys,values) => Object.fromEntries(keys.map((key,index) => [key, values[index]]));
+
+const makeArr = (...args) => args.map((item) => item);
+
+const makeId = () => {
+  let num = 1;
+  return () => num++;
 };
 
-const returnRandomElem = function(arr) {
-  const elem = arr[getRandomInt(0, arr.length - 1)];
-  return elem;
-};
+const isEscKey = (evt) => evt.keyCode === 27;
 
-const makeObj = function(keys,values) {
-  const obj = {};
-  for (let i = 0; i < keys.length; i++) {
-    obj[keys[i]] = values[i];
-  }
-  return obj;
-};
-
-const makeArr = function(...arg) {
-  const arr = [];
-  for (let i = 0; i < arguments.length; i++) {
-    arr.push(arguments[i]);
-  }
-  return arr;
-};
-
-export {getRandomInt, returnRandomElem, makeObj, makeArr};
+export {getRandomInt, returnRandomElem, makeObj, makeArr, makeId, isEscKey};
