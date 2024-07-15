@@ -1,4 +1,11 @@
 import {isEscKey} from './util.js';
+import { loadValidation } from './validation.js';
+import { closeImgRedactor } from './edit-picture.js';
+import { addImgRedactor } from './edit-picture.js';
+// import { addSlider } from './edit-picture.js';
+// import { changeScale } from './edit-picture.js';
+
+loadValidation();
 
 const body = document.querySelector('body');
 
@@ -11,7 +18,7 @@ const textDescription = document.querySelector('.text__description');
 
 const closeModalForm = () => {
   const imgUploadFieldWrapper = document.querySelector('.img-upload__field-wrapper');
-  const errorText = document.querySelector('.pristine-error.text-help');
+  // const errorText = document.querySelector('.pristine-error.text-help');
   imgUploadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
 
@@ -25,14 +32,16 @@ const closeModalForm = () => {
 
   // uploadFile.value = null;
 
+  closeImgRedactor();
+
   imgUploadForm.reset();
 
-  // errorText.textContent = null;
   imgUploadFieldWrapper.classList.remove('img-upload__field-wrapper--error');
 };
 
 const openModalForm = () => {
   imgUploadOverlay.classList.remove('hidden');
+
   body.classList.add('modal-open');
 
   uploadCancelButton.addEventListener('click', onLoadButtonClose);
@@ -42,6 +51,8 @@ const openModalForm = () => {
   textHashtags.addEventListener('focus', onTextHashtagsFocus);
 
   textDescription.addEventListener('focus', onDescriptionFocus);
+
+  addImgRedactor();
 
 };
 

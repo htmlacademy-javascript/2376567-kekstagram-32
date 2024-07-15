@@ -94,6 +94,13 @@ const showNextComments = () => {
   socialCommentShownCount.textContent = shownComments;
 };
 
+const clearComments = () => {
+  buttonCommentsLoader.classList.remove('hidden');
+  socialCommentCountBlock.classList.remove('hidden');
+  socialPicture.textContent = null;
+  visibleComments = 5;
+};
+
 const onLoadEscClose = (evt) => {
   if (isEscKey(evt)) {
     closeModal();
@@ -119,10 +126,7 @@ function closeModal() {
 
   buttonCommentsLoader.removeEventListener('click', onLoadComments);
 
-  buttonCommentsLoader.classList.remove('hidden');
-  socialCommentCountBlock.classList.remove('hidden');
-  socialPicture.textContent = null;
-  visibleComments = 5;
+  clearComments();
 }
 
 const loadModal = (data) => {

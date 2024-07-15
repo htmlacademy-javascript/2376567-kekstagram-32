@@ -19,7 +19,7 @@ const pristine = new Pristine(imgUploadForm, {
 const returnMessage = (value) => {
   let message = '';
   const elementValue = value.trim().toLowerCase().split(/ +/g);
-  if (elementValue.length > MAX_COUNT) {
+  if (elementValue.length > MAX_COUNT) {// переделать на forEach?
     message = `Максимум ${MAX_COUNT} хэш-тегов`;
     return message;
   }
@@ -47,13 +47,17 @@ const returnMessage = (value) => {
       message = 'Строка после решётки должна состоять только из букв и чисел';
       return message;
     }
-    if (elementValue.indexOf(elementValue[i], i + 1) >= i + 1) {
+    if (elementValue.indexOf(elementValue[i], i + 1) >= i + 1) {//переделать на set
       message = 'Хэш-теги не должны повторяться';
       return message;
     }
   }
   return message;
 };
+
+//добавить валидацию поля комментариев
+
+//добавить сброс pristine -> closeModalForm
 
 const loadValidation = () => {
   const errMessage = (value) => returnMessage(value);
