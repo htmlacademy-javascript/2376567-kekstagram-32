@@ -1,4 +1,9 @@
-import {isEscKey} from './util.js';
+import { isEscKey } from './util.js';
+import { loadValidation } from './validation.js';
+import { clearValidation } from './validation.js';
+import { pristine } from './validation.js';
+import { closeImgRedactor } from './edit-picture.js';
+import { addImgRedactor } from './edit-picture.js';
 
 const body = document.querySelector('body');
 
@@ -7,11 +12,9 @@ const imgUploadOverlay = document.querySelector('.img-upload__overlay');
 const uploadCancelButton = document.querySelector('#upload-cancel');
 const textHashtags = document.querySelector('.text__hashtags');
 const textDescription = document.querySelector('.text__description');
-// const uploadFile = document.querySelector('input#upload-file');
 
 const closeModalForm = () => {
   const imgUploadFieldWrapper = document.querySelector('.img-upload__field-wrapper');
-  const errorText = document.querySelector('.pristine-error.text-help');
   imgUploadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
 
@@ -23,16 +26,18 @@ const closeModalForm = () => {
 
   textDescription.removeEventListener('focus', onTextHashtagsFocus);
 
-  // uploadFile.value = null;
+  closeImgRedactor();
 
   imgUploadForm.reset();
 
-  // errorText.textContent = null;
+  clearValidation();
+
   imgUploadFieldWrapper.classList.remove('img-upload__field-wrapper--error');
 };
 
 const openModalForm = () => {
   imgUploadOverlay.classList.remove('hidden');
+
   body.classList.add('modal-open');
 
   uploadCancelButton.addEventListener('click', onLoadButtonClose);
@@ -43,6 +48,8 @@ const openModalForm = () => {
 
   textDescription.addEventListener('focus', onDescriptionFocus);
 
+  addImgRedactor();
+
 };
 
 const addStopPropagation = (evt) => {
@@ -51,31 +58,38 @@ const addStopPropagation = (evt) => {
   }
 };
 
-const onChangeForm = () => {
+function onChangeForm() {
   openModalForm();
-};
+}
 
-const onLoadButtonClose = () => {
+function onLoadButtonClose() {
   closeModalForm();
-};
+}
 
-const onLoadEscClose = (evt) => {
+function onLoadEscClose(evt) {
   if (isEscKey(evt)) {
     closeModalForm();
   }
-};
-
-const onTextHashtagsFocus = () => {
-  textHashtags.addEventListener("keydown", addStopPropagation);
 }
 
-const onDescriptionFocus = () => {
-  textDescription.addEventListener("keydown", addStopPropagation);
+function onTextHashtagsFocus() {
+  textHashtags.addEventListener('keydown', addStopPropagation);
+}
+
+function onDescriptionFocus() {
+  textDescription.addEventListener('keydown', addStopPropagation);
 }
 
 
 const loadForm = () => {
+  loadValidation();
   imgUploadForm.addEventListener('change',onChangeForm);
-}
+  imgUploadForm.addEventListener('submit', (evt) => {
+    pristine.validate();
+    evt.preventDefault();
 
-export { loadForm }
+
+});
+};
+
+export { loadForm };

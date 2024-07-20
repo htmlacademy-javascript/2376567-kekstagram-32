@@ -21,4 +21,4 @@ const getListContent = (content) => {
 };
 
 const picturesApped = (data) => picturesContainer.appendChild(getListContent(data));
-export {picturesApped};
+export { picturesApped} ;
