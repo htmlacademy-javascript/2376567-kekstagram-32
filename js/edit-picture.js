@@ -9,46 +9,6 @@ const scaleControlValue = document.querySelector('.scale__control--value');
 
 const imgUploadPreview = document.querySelector('.img-upload__preview img');
 
-const MIN_ZOOM_SCALE = 25;
-const MAX_ZOMM_SCALE = 100;
-const STEP_ZOOM_SCALE = 25;
-const DENOM_ZOOM_SCALE = 100;
-
-const disableScaleControlButton = (val) => {
-  if (val <= MIN_ZOOM_SCALE) {
-    scaleControlSmaller.setAttribute('disabled',true);
-  }
-
-  if (val >= MAX_ZOMM_SCALE) {
-    scaleControlBigger.setAttribute('disabled',true);
-  }
-
-  if (val >= MIN_ZOOM_SCALE + 1 && val <= MAX_ZOMM_SCALE - 1) {
-    scaleControlSmaller.removeAttribute('disabled');
-    scaleControlBigger.removeAttribute('disabled');
-  }
-};
-
-const onScaleControl = function(val) {
-  return (evt) => {
-    if (evt.target.classList.contains('scale__control--smaller')) {
-      val -= STEP_ZOOM_SCALE;
-    }
-    if (evt.target.classList.contains('scale__control--bigger')) {
-      val += STEP_ZOOM_SCALE;
-    }
-    disableScaleControlButton(val);
-    imgUploadPreview.style.transform = `scale(${val / DENOM_ZOOM_SCALE})`;
-    scaleControlValue.value = `${val}%`;
-  };
-};
-
-const changeScale = () => {
-  const value = parseInt(scaleControlValue.value, 10);
-  disableScaleControlButton(value);
-  imgUploadScale.addEventListener('click', onScaleControl(value));
-};
-
 const effectsList = document.querySelector('.effects__list');
 const sliderContainer = document.querySelector('.img-upload__effect-level');
 const valueElement = document.querySelector('.effect-level__value');
@@ -109,6 +69,46 @@ const effects = {
     start: 3,
     step: 0.1,
   },
+};
+
+const MIN_ZOOM_SCALE = 25;
+const MAX_ZOMM_SCALE = 100;
+const STEP_ZOOM_SCALE = 25;
+const DENOM_ZOOM_SCALE = 100;
+
+const disableScaleControlButton = (val) => {
+  if (val <= MIN_ZOOM_SCALE) {
+    scaleControlSmaller.setAttribute('disabled',true);
+  }
+
+  if (val >= MAX_ZOMM_SCALE) {
+    scaleControlBigger.setAttribute('disabled',true);
+  }
+
+  if (val >= MIN_ZOOM_SCALE + 1 && val <= MAX_ZOMM_SCALE - 1) {
+    scaleControlSmaller.removeAttribute('disabled');
+    scaleControlBigger.removeAttribute('disabled');
+  }
+};
+
+const onScaleControl = function(val) {
+  return (evt) => {
+    if (evt.target.classList.contains('scale__control--smaller')) {
+      val -= STEP_ZOOM_SCALE;
+    }
+    if (evt.target.classList.contains('scale__control--bigger')) {
+      val += STEP_ZOOM_SCALE;
+    }
+    disableScaleControlButton(val);
+    imgUploadPreview.style.transform = `scale(${val / DENOM_ZOOM_SCALE})`;
+    scaleControlValue.value = `${val}%`;
+  };
+};
+
+const changeScale = () => {
+  const value = parseInt(scaleControlValue.value, 10);
+  disableScaleControlButton(value);
+  imgUploadScale.addEventListener('click', onScaleControl(value));
 };
 
 const addSlider = () => {
@@ -173,6 +173,7 @@ const addImgRedactor = () => {
 
 const closeImgRedactor = () => {
   if (sliderElement.noUiSlider) {
+    sliderElement.noUiSlider.reset();
     sliderElement.noUiSlider.destroy();
   }
   imgUploadPreview.style = '';
@@ -180,9 +181,15 @@ const closeImgRedactor = () => {
   imgUploadScale.removeEventListener('click', onScaleControl);
 };
 
+// const reloadImgRedactor = () => {
+//   addImgRedactor();
+//   closeImgRedactor();
+// };
+
 export {
   addImgRedactor,
-  closeImgRedactor
+  closeImgRedactor,
+  // reloadImgRedactor
 };
 
 
