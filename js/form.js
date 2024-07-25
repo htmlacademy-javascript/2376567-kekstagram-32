@@ -4,7 +4,7 @@ import { clearValidation } from './validation.js';
 import { pristine } from './validation.js';
 import { closeImgRedactor } from './edit-picture.js';
 import { addImgRedactor } from './edit-picture.js';
-import { sendData } from './post-data.js';
+import { postData } from './api.js';
 
 const body = document.querySelector('body');
 
@@ -67,11 +67,11 @@ function onLoadModalEscClose(evt) {
   }
 }
 
-const validateForm = (submitButton,validation) => {
+const validateForm = (validation) => {
   if (validation) {
-    submitButton.disabled = false;
+    enableSubmitBtn();
   } else {
-    submitButton.disabled = true;
+    disableSubmitBtn();
   }
 };
 
@@ -89,13 +89,24 @@ function onDescriptionFocus() {
 }
 
 function onSubmitButton() {
-  validateForm(uploadSubmitButton,pristine.validate());
+  validateForm(pristine.validate());
 }
 
-function onSubmitForm(evt) {
+async function onSubmitForm(evt) {
   evt.preventDefault();
   const formDataObject = getFormData(evt.target);
-  sendData(formDataObject);
+  try {
+    disableSubmitBtn();
+    postData(formDataObject);
+    const response = await postData(formDataObject);
+    console.log('Данные успешно отправлены:', response);
+    onSuccesPost();
+  } catch (error) {
+    console.error('Ошибка при отправке данных:', error);
+    onErrorPost();
+  } finally {
+    enableSubmitBtn();
+  }
 }
 
 const loadForm = () => {
@@ -138,8 +149,28 @@ const loadMessage = (response) => {
 
 };
 
+function onSuccesPost() {
+  closeModalForm();
+  closeImgRedactor();
+  loadMessage(true);
+}
+
+function onErrorPost() {
+  loadMessage(false);
+  console.error(error.message);
+}
+
+function disableSubmitBtn() {
+  uploadSubmitButton.setAttribute('disabled', '')
+}
+
+function enableSubmitBtn() {
+  uploadSubmitButton.removeAttribute('disabled','');
+}
 export {
   loadForm,
   closeModalForm,
-  loadMessage
+  loadMessage,
+  disableSubmitBtn,
+  enableSubmitBtn
 };

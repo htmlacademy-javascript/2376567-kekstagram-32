@@ -1,15 +1,25 @@
-// import { createContent } from './data.js';
 import { picturesApped } from './preview.js';
 import { loadModal } from './modal.js';
 import { loadForm } from './form.js';
-import { getData } from './get-data.js';
-// import './post-data.js';
+import { getData } from './api.js';
+// import './filter.js';
 
-// const data = createContent(1,25);
+const onErrorGet = () => {
+  const body = document.querySelector('body');
+  const dataErrorTemplate = document.querySelector('#data-error').content.querySelector('.data-error');
+  const errorBlock = dataErrorTemplate.cloneNode(true);
+  body.insertAdjacentElement('beforeBegin', errorBlock);
+  setTimeout(() => errorBlock.remove(), 5000);
+}
 
-const data = await getData();
+try {
+  const data = await getData();
+  picturesApped(data);
+  loadModal(data);
+  // loadFilter();
+} catch (error) {
+  console.error(error);
+  onErrorGet();
+}
 
-picturesApped(data);
-loadModal(data);
 loadForm();
-

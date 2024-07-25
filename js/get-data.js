@@ -1,5 +1,5 @@
 const body = document.querySelector('body');
-const dataErrorTemplate = document.querySelector('#data-error').content.querySelector('.data-error');
+// const dataErrorTemplate = document.querySelector('#data-error').content.querySelector('.data-error');
 
 async function getData() {
   try {
@@ -9,6 +9,7 @@ async function getData() {
       return data;
     }
   } catch {
+    const dataErrorTemplate = document.querySelector('#data-error').content.querySelector('.data-error');
     const errorBlock = dataErrorTemplate.cloneNode(true);
     body.insertAdjacentElement('beforeBegin', errorBlock);
     setTimeout(() => errorBlock.remove(), 5000);
