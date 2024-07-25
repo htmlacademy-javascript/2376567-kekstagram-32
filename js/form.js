@@ -117,18 +117,18 @@ const loadForm = () => {
 const loadMessage = (response) => {
   const result = response ? 'success' : 'error';
   const template = document.querySelector(`#${result}`).content.querySelector(`.${result}`);
-  const notefication = template.cloneNode(true);
+  const notification = template.cloneNode(true);
 
   const closeMessages = () => {
     body.classList.remove('modal-open');
-    notefication.removeEventListener('click', onButtonMessagge);
+    notification.removeEventListener('click', onButtonMessagge);
     document.addEventListener('keydown', onLoadModalEscClose);
     document.removeEventListener('keydown', onMessagesEscClose);
-    notefication.remove();
+    notification.remove();
   };
 
   function onMessagesEscClose(evt) {
-    if (isEscKey(evt) && notefication.isConnected) {
+    if (isEscKey(evt) && notification.isConnected) {
       closeMessages();
     }
   }
@@ -142,10 +142,10 @@ const loadMessage = (response) => {
   }
 
   body.classList.add('modal-open');
-  notefication.addEventListener('click', onButtonMessagge);
+  notification.addEventListener('click', onButtonMessagge);
   document.removeEventListener('keydown', onLoadModalEscClose);
   document.addEventListener('keydown', onMessagesEscClose);
-  body.insertAdjacentElement('beforeBegin', notefication);
+  body.insertAdjacentElement('beforeBegin', notification);
 
 };
 
@@ -161,7 +161,7 @@ function onErrorPost() {
 }
 
 function disableSubmitBtn() {
-  uploadSubmitButton.setAttribute('disabled', '')
+  uploadSubmitButton.setAttribute('disabled', '');
 }
 
 function enableSubmitBtn() {
