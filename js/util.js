@@ -13,4 +13,12 @@ const makeId = () => {
 
 const isEscKey = (evt) => evt.keyCode === 27;
 
-export {getRandomInt, returnRandomElem, makeObj, makeArr, makeId, isEscKey};
+const debounce = (callback, timeoutDelay) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
+export {getRandomInt, returnRandomElem, makeObj, makeArr, makeId, isEscKey, debounce};

@@ -1,9 +1,11 @@
-const SEND_DATA_PATH = 'https://32.javascript.htmlacademy.pro/kekstagram';
-const GET_DATA_PATH = 'https://32.javascript.htmlacademy.pro/kekstagram/data';
+const DATA_PATH = 'https://32.javascript.htmlacademy.pro/kekstagram';
+const GET_ROUTE = '/data';
+const POST_ROUTE = '/';
 
-const load = async (path, method, body = null) => {
+
+const load = async (path, route, method, body = null) => {
   try {
-    const response = await fetch(path, {
+    const response = await fetch(path + route, {
       method: method,
       body: body
     });
@@ -18,9 +20,9 @@ const load = async (path, method, body = null) => {
   }
 };
 
-const postData = (body) => load(SEND_DATA_PATH, 'POST', body);
+const postData = (body) => load(DATA_PATH, POST_ROUTE, 'POST', body);
 const getData = () => {
-  const data = load(GET_DATA_PATH, 'GET');
+  const data = load(DATA_PATH, GET_ROUTE, 'GET');
   return data;
 };
 
