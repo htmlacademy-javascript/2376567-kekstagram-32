@@ -5,11 +5,11 @@ import { pristine } from './validation.js';
 import { closeImgRedactor } from './edit-picture.js';
 import { addImgRedactor } from './edit-picture.js';
 import { postData } from './api.js';
+import { imgLoader } from './load-picture.js'
 
 const body = document.querySelector('body');
 
 const imgUploadForm = document.querySelector('.img-upload__form');
-// const uploadFile = imgUploadForm.querySelector('#upload-file');
 const imgUploadOverlay = document.querySelector('.img-upload__overlay');
 const uploadCancelButton = document.querySelector('#upload-cancel');
 const textHashtags = document.querySelector('.text__hashtags');
@@ -111,6 +111,7 @@ async function onSubmitForm(evt) {
 
 const loadForm = () => {
   loadValidation();
+  imgLoader();
   imgUploadForm.addEventListener('change',onChangeForm);
 };
 

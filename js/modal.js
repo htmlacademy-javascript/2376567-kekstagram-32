@@ -25,6 +25,8 @@ const STEP_SHOWN_COMMENTS = 5;
 
 let visibleComments = 5;
 
+let currentData;
+
 const makeCommentBlock = (avatarSrc,commentatorName,commentText) => {
   const listItem = document.createElement('li');
   listItem.classList.add('social__comment');
@@ -115,39 +117,37 @@ function onLoadComments() {
   showNextComments();
 }
 
+const onPictureClick = (event) => handlePictureClick(event, currentData);
+
 function closeModal() {
   bigPicture.classList.add('hidden');
-
   body.classList.remove('modal-open');
-
   document.removeEventListener('keydown', onLoadEscClose);
-
   pictureCancel.removeEventListener('click', onLoadButtonClose);
-
   buttonCommentsLoader.removeEventListener('click', onLoadComments);
-
   clearComments();
 }
 
+const handlePictureClick = (event, data) => {
+  const parentLink = event.target.closest('a.picture');
+  if (parentLink) {
+    const id = Number(parentLink.dataset.id);
+    event.preventDefault();
+    bigPicture.classList.remove('hidden');
+    renderPictures(data, id);
+    renderSocials(data, id);
+    renderComments(data, id);
+    body.classList.add('modal-open');
+    document.addEventListener('keydown', onLoadEscClose);
+    pictureCancel.addEventListener('click', onLoadButtonClose);
+    buttonCommentsLoader.addEventListener('click', onLoadComments);
+  }
+};
+
 const loadModal = (data) => {
-  container.addEventListener('click', (event) => {
-    const parentLink = event.target.closest('a.picture');
-    if (parentLink) {
-      const id = Number(parentLink.dataset.id);
-      event.preventDefault();
-      bigPicture.classList.remove('hidden');
-      renderPictures(data,id);
-      renderSocials(data,id);
-      renderComments(data,id);
-      body.classList.add('modal-open');
-
-      document.addEventListener('keydown', onLoadEscClose);
-
-      pictureCancel.addEventListener('click', onLoadButtonClose);
-
-      buttonCommentsLoader.addEventListener('click', onLoadComments);
-    }
-  });
+  currentData = data;
+  container.removeEventListener('click', onPictureClick);
+  container.addEventListener('click', onPictureClick);
 };
 
 export { loadModal };

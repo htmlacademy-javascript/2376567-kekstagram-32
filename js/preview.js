@@ -20,5 +20,9 @@ const getListContent = (content) => {
   return fragment;
 };
 
-const picturesApped = (data) => picturesContainer.appendChild(getListContent(data));
-export { picturesApped} ;
+const picturesApped = (data) => {
+  const picture = Array.from(picturesContainer.querySelectorAll('.picture'));
+  picture.forEach((element) => element.remove());
+  picturesContainer.appendChild(getListContent(data));
+};
+export { picturesApped } ;
