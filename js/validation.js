@@ -91,7 +91,8 @@ const loadValidation = () => {
 };
 
 const clearValidation = () => {
-  pristine.destroy();
+  pristine.reset();
+  // pristine.destroy();
 };
 
 export {
