@@ -103,29 +103,8 @@ const clearComments = () => {
   visibleComments = 5;
 };
 
-const onLoadEscClose = (evt) => {
-  if (isEscKey(evt)) {
-    closeModal();
-  }
-};
-
-const onLoadButtonClose = () => {
-  closeModal();
-};
-
 function onLoadComments() {
   showNextComments();
-}
-
-const onPictureClick = (event) => handlePictureClick(event, currentData);
-
-function closeModal() {
-  bigPicture.classList.add('hidden');
-  body.classList.remove('modal-open');
-  document.removeEventListener('keydown', onLoadEscClose);
-  pictureCancel.removeEventListener('click', onLoadButtonClose);
-  buttonCommentsLoader.removeEventListener('click', onLoadComments);
-  clearComments();
 }
 
 const handlePictureClick = (event, data) => {
@@ -143,6 +122,27 @@ const handlePictureClick = (event, data) => {
     buttonCommentsLoader.addEventListener('click', onLoadComments);
   }
 };
+
+const onPictureClick = (event) => handlePictureClick(event, currentData);
+
+const closeModal = () => {
+  body.classList.remove('modal-open');
+  bigPicture.classList.add('hidden');
+  document.removeEventListener('keydown', onLoadEscClose);
+  pictureCancel.removeEventListener('click', onLoadButtonClose);
+  buttonCommentsLoader.removeEventListener('click', onLoadComments);
+  clearComments();
+};
+
+function onLoadButtonClose() {
+  closeModal();
+}
+
+function onLoadEscClose(evt) {
+  if (isEscKey(evt)) {
+    closeModal();
+  }
+}
 
 const loadModal = (data) => {
   currentData = data;

@@ -1,5 +1,6 @@
 const uploadFile = document.querySelector('#upload-file');
 const previewPicture = document.querySelector('.img-upload__preview>img');
+const effectsPreview = document.querySelectorAll('.effects__preview');
 const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
 const imgLoader = () => {
@@ -9,7 +10,12 @@ const imgLoader = () => {
     const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
 
     if (matches) {
-      previewPicture.src = URL.createObjectURL(file);
+      const objectURL = URL.createObjectURL(file);
+      previewPicture.src = objectURL;
+
+      effectsPreview.forEach((effect) => {
+        effect.style.backgroundImage = `url(${objectURL})`;
+      });
     }
   });
 };

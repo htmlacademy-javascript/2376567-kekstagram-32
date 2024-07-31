@@ -5,7 +5,7 @@ import { debounce } from './util.js';
 
 const QUANITY_PICTURES = 10;
 
-const RERENDER_DELAY = 400;
+const RERENDER_DELAY = 500;
 
 const getAllPictures = (arr) => arr;
 
@@ -20,7 +20,7 @@ const getRandomPictures = (arr) => {
   return Array.from(uniqueValues);
 };
 
-const getPopularPictures = (arr) => arr.slice().sort((a,b) => b.likes - a.likes);
+const getPopularPictures = (arr) => arr.slice().sort((a,b) => b.comments.length - a.comments.length);
 
 const getFilteredData = (data,button) => {
   if (button.id === 'filter-default') {
@@ -42,18 +42,20 @@ const setActiveFilterButton = (activeButton) => {
   activeButton.classList.add('img-filters__button--active');
 };
 
-const onImgFilter = (data) => (evt) => {
-  const filterButton = evt.target.closest('button.img-filters__button');
-  if (filterButton) {
-    setActiveFilterButton(filterButton);
-    debounce(() => {
-      const filteredData = getFilteredData(data, filterButton);
-      picturesApped(filteredData);
-      loadModal(filteredData);
-    },
-    RERENDER_DELAY,
-  )();
-  }
+const onImgFilter = (data) => {
+  const debouncedFunction = debounce((button) => {
+    const filteredData = getFilteredData(data, button);
+    picturesApped(filteredData);
+    loadModal(filteredData);
+  }, RERENDER_DELAY);
+
+  return (evt) => {
+    const filterButton = evt.target.closest('button.img-filters__button');
+    if (filterButton) {
+      setActiveFilterButton(filterButton);
+      debouncedFunction(filterButton);
+    }
+  };
 };
 
 const addListener = (data) => {

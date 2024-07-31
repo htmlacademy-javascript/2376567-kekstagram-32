@@ -5,7 +5,7 @@ import { pristine } from './validation.js';
 import { closeImgRedactor } from './edit-picture.js';
 import { addImgRedactor } from './edit-picture.js';
 import { postData } from './api.js';
-import { imgLoader } from './load-picture.js'
+import { imgLoader } from './load-picture.js';
 
 const body = document.querySelector('body');
 
@@ -15,6 +15,7 @@ const uploadCancelButton = document.querySelector('#upload-cancel');
 const textHashtags = document.querySelector('.text__hashtags');
 const textDescription = document.querySelector('.text__description');
 const uploadSubmitButton = imgUploadForm.querySelector('#upload-submit');
+const imgUploadInput = imgUploadForm.querySelector('.img-upload__input');
 
 const clearForm = () => {
   const imgUploadFieldWrapper = document.querySelector('.img-upload__field-wrapper');
@@ -26,8 +27,8 @@ const clearForm = () => {
 };
 
 const closeModalForm = () => {
-  imgUploadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
+  imgUploadOverlay.classList.add('hidden');
   uploadCancelButton.removeEventListener('click', onLoadButtonClose);
   document.removeEventListener('keydown', onLoadModalEscClose);
   textHashtags.removeEventListener('focus', onTextHashtagsFocus);
@@ -67,6 +68,14 @@ function onLoadModalEscClose(evt) {
   }
 }
 
+const disableSubmitBtn = () => {
+  uploadSubmitButton.setAttribute('disabled', '');
+};
+
+const enableSubmitBtn = () => {
+  uploadSubmitButton.removeAttribute('disabled','');
+};
+
 const validateForm = (validation) => {
   if (validation) {
     enableSubmitBtn();
@@ -97,7 +106,7 @@ async function onSubmitForm(evt) {
   const formDataObject = getFormData(evt.target);
   try {
     disableSubmitBtn();
-    postData(formDataObject);
+    // await postData(formDataObject);
     const response = await postData(formDataObject);
     console.log('Данные успешно отправлены:', response);
     onSuccesPost();
@@ -113,6 +122,7 @@ const loadForm = () => {
   loadValidation();
   imgLoader();
   imgUploadForm.addEventListener('change',onChangeForm);
+  imgUploadInput.focus();
 };
 
 const loadMessage = (response) => {
@@ -151,9 +161,9 @@ const loadMessage = (response) => {
 };
 
 function onSuccesPost() {
-  closeModalForm();
   closeImgRedactor();
   loadMessage(true);
+  closeModalForm();
 }
 
 function onErrorPost() {
@@ -161,13 +171,6 @@ function onErrorPost() {
   console.error(error.message);
 }
 
-function disableSubmitBtn() {
-  uploadSubmitButton.setAttribute('disabled', '');
-}
-
-function enableSubmitBtn() {
-  uploadSubmitButton.removeAttribute('disabled','');
-}
 export {
   loadForm,
   closeModalForm,

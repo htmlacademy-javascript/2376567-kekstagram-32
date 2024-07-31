@@ -5,7 +5,7 @@ const POST_ROUTE = '/';
 
 const load = async (path, route, method, body = null) => {
   try {
-    const response = await fetch(path + route, {
+    const response = await fetch(`${path}${route}`, {
       method: method,
       body: body
     });
@@ -21,8 +21,8 @@ const load = async (path, route, method, body = null) => {
 };
 
 const postData = (body) => load(DATA_PATH, POST_ROUTE, 'POST', body);
-const getData = () => {
-  const data = load(DATA_PATH, GET_ROUTE, 'GET');
+const getData = async () => {
+  const data = await load(DATA_PATH, GET_ROUTE, 'GET');
   return data;
 };
 
