@@ -1,17 +1,23 @@
 import '../vendor/nouislider/nouislider.js';
 
+const MIN_ZOOM_SCALE = 25;
+const MAX_ZOOM_SCALE = 100;
+const STEP_ZOOM_SCALE = 25;
+const DENOM_ZOOM_SCALE = 100;
+
 const sliderElement = document.querySelector('.effect-level__slider');
 
 const imgUploadScale = document.querySelector('.img-upload__scale');
-const scaleControlSmaller = document.querySelector('.scale__control--smaller');
-const scaleControlBigger = document.querySelector('.scale__control--bigger');
-const scaleControlValue = document.querySelector('.scale__control--value');
+const scaleControlSmaller = imgUploadScale.querySelector('.scale__control--smaller');
+const scaleControlBigger = imgUploadScale.querySelector('.scale__control--bigger');
+const scaleControlValue = imgUploadScale.querySelector('.scale__control--value');
 
 const imgUploadPreview = document.querySelector('.img-upload__preview img');
 
 const effectsList = document.querySelector('.effects__list');
+
 const sliderContainer = document.querySelector('.img-upload__effect-level');
-const valueElement = document.querySelector('.effect-level__value');
+const valueElement = sliderContainer.querySelector('.effect-level__value');
 
 const effects = {
   none: {
@@ -71,11 +77,6 @@ const effects = {
   },
 };
 
-const MIN_ZOOM_SCALE = 25;
-const MAX_ZOOM_SCALE = 100;
-const STEP_ZOOM_SCALE = 25;
-const DENOM_ZOOM_SCALE = 100;
-
 const disableScaleControlButton = (val) => {
   if (val <= MIN_ZOOM_SCALE) {
     scaleControlSmaller.setAttribute('disabled', true);
@@ -90,24 +91,50 @@ const disableScaleControlButton = (val) => {
   }
 };
 
-const onScaleControl = function(val) {
-  return (evt) => {
-    if (evt.target.classList.contains('scale__control--smaller')) {
-      val = Math.max(val - STEP_ZOOM_SCALE, MIN_ZOOM_SCALE);
-    }
-    if (evt.target.classList.contains('scale__control--bigger')) {
-      val = Math.min(val + STEP_ZOOM_SCALE, MAX_ZOOM_SCALE);
-    }
-    disableScaleControlButton(val);
-    imgUploadPreview.style.transform = `scale(${val / DENOM_ZOOM_SCALE})`;
-    scaleControlValue.value = `${val}%`;
-  };
+const onImgUploadScale = (val) => function scaleControler(evt) {
+  if (evt.target.classList.contains('scale__control--smaller')) {
+    val = Math.max(val - STEP_ZOOM_SCALE, MIN_ZOOM_SCALE);
+  }
+  if (evt.target.classList.contains('scale__control--bigger')) {
+    val = Math.min(val + STEP_ZOOM_SCALE, MAX_ZOOM_SCALE);
+  }
+  disableScaleControlButton(val);
+  imgUploadPreview.style.transform = `scale(${val / DENOM_ZOOM_SCALE})`;
+  scaleControlValue.value = `${val}%`;
 };
 
 const changeScale = () => {
   const value = parseInt(scaleControlValue.value, 10);
   disableScaleControlButton(value);
-  imgUploadScale.addEventListener('click', onScaleControl(value));
+  imgUploadScale.addEventListener('click', onImgUploadScale(value));
+};
+
+const onChangeEffectPhoto = (evt) => {
+  evt.stopPropagation();
+
+  if (evt.target.value === 'none') {
+    sliderContainer.classList.add('hidden');
+    imgUploadPreview.style.filter = null;
+  } else {
+    sliderContainer.classList.remove('hidden');
+    sliderElement.noUiSlider.updateOptions({
+      range: {
+        min: effects[evt.target.value].min,
+        max: effects[evt.target.value].max,
+      },
+      start: effects[evt.target.value].start,
+      step: effects[evt.target.value].step,
+    });
+
+    sliderElement.noUiSlider.on('update', () => {
+      valueElement.value = sliderElement.noUiSlider.get();
+
+      const effectValue = effects[evt.target.value].filter;
+      const unit = effects[evt.target.value].unit;
+
+      imgUploadPreview.style.filter = `${effectValue}(${valueElement.value}${unit})`;
+    });
+  }
 };
 
 const addSlider = () => {
@@ -135,34 +162,6 @@ const addSlider = () => {
   effectsList.addEventListener('change', onChangeEffectPhoto);
 };
 
-function onChangeEffectPhoto (evt) {
-  evt.stopPropagation();
-
-  if (evt.target.value === 'none') {
-    sliderContainer.classList.add('hidden');
-    imgUploadPreview.style.filter = null;
-  } else {
-    sliderContainer.classList.remove('hidden');
-    sliderElement.noUiSlider.updateOptions({
-      range: {
-        min: effects[evt.target.value].min,
-        max: effects[evt.target.value].max,
-      },
-      start: effects[evt.target.value].start,
-      step: effects[evt.target.value].step,
-    });
-
-    sliderElement.noUiSlider.on('update', () => {
-      valueElement.value = sliderElement.noUiSlider.get();
-
-      const effectValue = effects[evt.target.value].filter;
-      const unit = effects[evt.target.value].unit;
-
-      imgUploadPreview.style.filter = `${effectValue}(${valueElement.value}${unit})`;
-    });
-  }
-}
-
 const addImgRedactor = () => {
   changeScale();
   if (!sliderElement.noUiSlider) {
@@ -177,18 +176,10 @@ const closeImgRedactor = () => {
   }
   imgUploadPreview.style = '';
   effectsList.removeEventListener('change', onChangeEffectPhoto);
-  imgUploadScale.removeEventListener('click', onScaleControl);
+  imgUploadScale.removeEventListener('click', onImgUploadScale);
 };
-
-// const reloadImgRedactor = () => {
-//   addImgRedactor();
-//   closeImgRedactor();
-// };
 
 export {
   addImgRedactor,
   closeImgRedactor,
-  // reloadImgRedactor
 };
-
-

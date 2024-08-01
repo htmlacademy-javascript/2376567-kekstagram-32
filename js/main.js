@@ -14,9 +14,7 @@ loadForm();
 
 try {
   const data = await getData();
-  console.log(data);
   loadFilter(data);
 } catch (error) {
-  console.error(error);
   onErrorGet();
 }

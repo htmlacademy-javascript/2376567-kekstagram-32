@@ -7,6 +7,8 @@ const QUANITY_PICTURES = 10;
 
 const RERENDER_DELAY = 500;
 
+const imgFilters = document.querySelector('.img-filters');
+
 const getAllPictures = (arr) => arr;
 
 const getRandomPictures = (arr) => {
@@ -42,7 +44,7 @@ const setActiveFilterButton = (activeButton) => {
   activeButton.classList.add('img-filters__button--active');
 };
 
-const onImgFilter = (data) => {
+const onImgFilters = (data) => {
   const debouncedFunction = debounce((button) => {
     const filteredData = getFilteredData(data, button);
     picturesApped(filteredData);
@@ -59,13 +61,11 @@ const onImgFilter = (data) => {
 };
 
 const addListener = (data) => {
-  const imgFilters = document.querySelector('.img-filters');
-  imgFilters.addEventListener('click', onImgFilter(data));
+  imgFilters.addEventListener('click', onImgFilters(data));
 };
 
 const loadFilter = (data) => {
-  const filter = document.querySelector('.img-filters');
-  filter.classList.remove('img-filters--inactive');
+  imgFilters.classList.remove('img-filters--inactive');
   picturesApped(getAllPictures(data));
   loadModal(data);
   addListener(data);
