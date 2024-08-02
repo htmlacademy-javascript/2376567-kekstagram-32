@@ -81,7 +81,7 @@ const openModalForm = () => {
   addImgRedactor();
 };
 
-const onChangeForm = () => {
+const onFormChange = () => {
   openModalForm();
 };
 
@@ -127,7 +127,7 @@ async function onSubmitForm(evt) {
 const loadForm = () => {
   loadValidation();
   imgLoader();
-  imgUploadForm.addEventListener('change',onChangeForm);
+  imgUploadForm.addEventListener('change',onFormChange);
 };
 
 const loadMessage = (response) => {
