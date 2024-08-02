@@ -4,25 +4,20 @@ const POST_ROUTE = '/';
 
 
 const load = async (path, route, method, body = null) => {
-  try {
-    const response = await fetch(path + route, {
-      method: method,
-      body: body
-    });
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    }
-    throw new Error(`Ошибка загрузки: ${response.status}`);
-  } catch (error) {
-    console.error(error);
-    throw error;
+  const response = await fetch(`${path}${route}`, {
+    method: method,
+    body: body
+  });
+  if (response.ok) {
+    const data = await response.json();
+    return data;
   }
+  throw new Error(`Ошибка загрузки: ${response.status}`);
 };
 
 const postData = (body) => load(DATA_PATH, POST_ROUTE, 'POST', body);
-const getData = () => {
-  const data = load(DATA_PATH, GET_ROUTE, 'GET');
+const getData = async () => {
+  const data = await load(DATA_PATH, GET_ROUTE, 'GET');
   return data;
 };
 

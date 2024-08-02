@@ -1,5 +1,7 @@
 import {getRandomInt, isEscKey} from './util.js';
 
+const STEP_SHOWN_COMMENTS = 5;
+
 const bigPicture = document.querySelector('.big-picture');
 const bigPictureImg = bigPicture.querySelector('.big-picture__img img');
 
@@ -13,15 +15,13 @@ const socialCommentCountBlock = bigPicture.querySelector('.social__comment-count
 const socialComments = bigPicture.querySelector('.social__comments');
 const commentsList = document.getElementsByClassName('social__comment');
 
-const container = document.querySelector('.pictures');
+const picturesContainer = document.querySelector('.pictures');
 
 const pictureCancel = document.querySelector('#picture-cancel');
 
 const buttonCommentsLoader = document.querySelector('button.comments-loader');
 
 const body = document.querySelector('body');
-
-const STEP_SHOWN_COMMENTS = 5;
 
 let visibleComments = 5;
 
@@ -103,29 +103,8 @@ const clearComments = () => {
   visibleComments = 5;
 };
 
-const onLoadEscClose = (evt) => {
-  if (isEscKey(evt)) {
-    closeModal();
-  }
-};
-
-const onLoadButtonClose = () => {
-  closeModal();
-};
-
-function onLoadComments() {
+function onButtonCommentsLoader() {
   showNextComments();
-}
-
-const onPictureClick = (event) => handlePictureClick(event, currentData);
-
-function closeModal() {
-  bigPicture.classList.add('hidden');
-  body.classList.remove('modal-open');
-  document.removeEventListener('keydown', onLoadEscClose);
-  pictureCancel.removeEventListener('click', onLoadButtonClose);
-  buttonCommentsLoader.removeEventListener('click', onLoadComments);
-  clearComments();
 }
 
 const handlePictureClick = (event, data) => {
@@ -138,16 +117,37 @@ const handlePictureClick = (event, data) => {
     renderSocials(data, id);
     renderComments(data, id);
     body.classList.add('modal-open');
-    document.addEventListener('keydown', onLoadEscClose);
-    pictureCancel.addEventListener('click', onLoadButtonClose);
-    buttonCommentsLoader.addEventListener('click', onLoadComments);
+    document.addEventListener('keydown', onDocumentPictureCancel);
+    pictureCancel.addEventListener('click', onPictureCancel);
+    buttonCommentsLoader.addEventListener('click', onButtonCommentsLoader);
   }
 };
 
+const onPicturesContainer = (event) => handlePictureClick(event, currentData);
+
+const closeModal = () => {
+  body.classList.remove('modal-open');
+  bigPicture.classList.add('hidden');
+  document.removeEventListener('keydown', onDocumentPictureCancel);
+  pictureCancel.removeEventListener('click', onPictureCancel);
+  buttonCommentsLoader.removeEventListener('click', onButtonCommentsLoader);
+  clearComments();
+};
+
+function onPictureCancel() {
+  closeModal();
+}
+
+function onDocumentPictureCancel(evt) {
+  if (isEscKey(evt)) {
+    closeModal();
+  }
+}
+
 const loadModal = (data) => {
   currentData = data;
-  container.removeEventListener('click', onPictureClick);
-  container.addEventListener('click', onPictureClick);
+  picturesContainer.removeEventListener('click', onPicturesContainer);
+  picturesContainer.addEventListener('click', onPicturesContainer);
 };
 
 export { loadModal };

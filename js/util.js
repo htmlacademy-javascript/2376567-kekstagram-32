@@ -6,11 +6,6 @@ const makeObj = (keys,values) => Object.fromEntries(keys.map((key,index) => [key
 
 const makeArr = (...args) => args.map((item) => item);
 
-const makeId = () => {
-  let num = 1;
-  return () => num++;
-};
-
 const isEscKey = (evt) => evt.keyCode === 27;
 
 const debounce = (callback, timeoutDelay) => {
@@ -21,4 +16,4 @@ const debounce = (callback, timeoutDelay) => {
   };
 };
 
-export {getRandomInt, returnRandomElem, makeObj, makeArr, makeId, isEscKey, debounce};
+export {getRandomInt, returnRandomElem, makeObj, makeArr, isEscKey, debounce};

@@ -5,19 +5,19 @@ import { pristine } from './validation.js';
 import { closeImgRedactor } from './edit-picture.js';
 import { addImgRedactor } from './edit-picture.js';
 import { postData } from './api.js';
-import { imgLoader } from './load-picture.js'
+import { imgLoader } from './load-picture.js';
 
 const body = document.querySelector('body');
 
 const imgUploadForm = document.querySelector('.img-upload__form');
-const imgUploadOverlay = document.querySelector('.img-upload__overlay');
-const uploadCancelButton = document.querySelector('#upload-cancel');
-const textHashtags = document.querySelector('.text__hashtags');
-const textDescription = document.querySelector('.text__description');
+const imgUploadOverlay = imgUploadForm.querySelector('.img-upload__overlay');
+const uploadCancelButton = imgUploadForm.querySelector('#upload-cancel');
+const textHashtags = imgUploadForm.querySelector('.text__hashtags');
+const textDescription = imgUploadForm.querySelector('.text__description');
 const uploadSubmitButton = imgUploadForm.querySelector('#upload-submit');
+const imgUploadFieldWrapper = imgUploadForm.querySelector('.img-upload__field-wrapper');
 
 const clearForm = () => {
-  const imgUploadFieldWrapper = document.querySelector('.img-upload__field-wrapper');
   imgUploadForm.removeEventListener('input',onSubmitButton);
   closeImgRedactor();
   imgUploadForm.reset();
@@ -25,14 +25,48 @@ const clearForm = () => {
   imgUploadFieldWrapper.classList.remove('img-upload__field-wrapper--error');
 };
 
+const addStopPropagation = (evt) => {
+  if (isEscKey(evt)) {
+    evt.stopPropagation();
+  }
+};
+
+const onTextHashtagsKeydown = (evt) => {
+  addStopPropagation(evt);
+};
+
+const onTextHashtagsFocus = () => {
+  textHashtags.addEventListener('keydown', onTextHashtagsKeydown);
+};
+
+const onTextDescriptionKeydown = (evt) => {
+  addStopPropagation(evt);
+};
+
 const closeModalForm = () => {
-  imgUploadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
+  imgUploadOverlay.classList.add('hidden');
   uploadCancelButton.removeEventListener('click', onLoadButtonClose);
   document.removeEventListener('keydown', onLoadModalEscClose);
   textHashtags.removeEventListener('focus', onTextHashtagsFocus);
   textDescription.removeEventListener('focus', onTextHashtagsFocus);
+  textHashtags.removeEventListener('keydown', onTextHashtagsKeydown);
+  textDescription.removeEventListener('keydown', onTextDescriptionKeydown);
   clearForm();
+};
+
+function onLoadModalEscClose(evt) {
+  if (isEscKey(evt)) {
+    closeModalForm();
+  }
+}
+
+function onLoadButtonClose() {
+  closeModalForm();
+}
+
+const onDescriptionFocus = () => {
+  textDescription.addEventListener('keydown', onTextDescriptionKeydown);
 };
 
 const openModalForm = () => {
@@ -47,25 +81,17 @@ const openModalForm = () => {
   addImgRedactor();
 };
 
-const addStopPropagation = (evt) => {
-  if (isEscKey(evt)) {
-    evt.stopPropagation();
-  }
+const onChangeForm = () => {
+  openModalForm();
 };
 
-function onChangeForm() {
-  openModalForm();
-}
+const disableSubmitBtn = () => {
+  uploadSubmitButton.setAttribute('disabled', '');
+};
 
-function onLoadButtonClose() {
-  closeModalForm();
-}
-
-function onLoadModalEscClose(evt) {
-  if (isEscKey(evt)) {
-    closeModalForm();
-  }
-}
+const enableSubmitBtn = () => {
+  uploadSubmitButton.removeAttribute('disabled','');
+};
 
 const validateForm = (validation) => {
   if (validation) {
@@ -80,14 +106,6 @@ const getFormData = (form) => {
   return formData;
 };
 
-function onTextHashtagsFocus() {
-  textHashtags.addEventListener('keydown', addStopPropagation);
-}
-
-function onDescriptionFocus() {
-  textDescription.addEventListener('keydown', addStopPropagation);
-}
-
 function onSubmitButton() {
   validateForm(pristine.validate());
 }
@@ -97,13 +115,10 @@ async function onSubmitForm(evt) {
   const formDataObject = getFormData(evt.target);
   try {
     disableSubmitBtn();
-    postData(formDataObject);
-    const response = await postData(formDataObject);
-    console.log('Данные успешно отправлены:', response);
-    onSuccesPost();
+    await postData(formDataObject);
+    handleSuccesPost();
   } catch (error) {
-    console.error('Ошибка при отправке данных:', error);
-    onErrorPost();
+    handleErrorPost();
   } finally {
     enableSubmitBtn();
   }
@@ -150,24 +165,16 @@ const loadMessage = (response) => {
 
 };
 
-function onSuccesPost() {
-  closeModalForm();
+function handleSuccesPost() {
   closeImgRedactor();
   loadMessage(true);
+  closeModalForm();
 }
 
-function onErrorPost() {
+function handleErrorPost() {
   loadMessage(false);
-  console.error(error.message);
 }
 
-function disableSubmitBtn() {
-  uploadSubmitButton.setAttribute('disabled', '');
-}
-
-function enableSubmitBtn() {
-  uploadSubmitButton.removeAttribute('disabled','');
-}
 export {
   loadForm,
   closeModalForm,
