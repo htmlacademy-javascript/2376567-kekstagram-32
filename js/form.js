@@ -31,8 +31,16 @@ const addStopPropagation = (evt) => {
   }
 };
 
+const onTextHashtagsKeydown = (evt) => {
+  addStopPropagation(evt);
+};
+
 const onTextHashtagsFocus = () => {
-  textHashtags.addEventListener('keydown', addStopPropagation);
+  textHashtags.addEventListener('keydown', onTextHashtagsKeydown);
+};
+
+const onTextDescriptionKeydown = (evt) => {
+  addStopPropagation(evt);
 };
 
 const closeModalForm = () => {
@@ -42,6 +50,8 @@ const closeModalForm = () => {
   document.removeEventListener('keydown', onLoadModalEscClose);
   textHashtags.removeEventListener('focus', onTextHashtagsFocus);
   textDescription.removeEventListener('focus', onTextHashtagsFocus);
+  textHashtags.removeEventListener('keydown', onTextHashtagsKeydown);
+  textDescription.removeEventListener('keydown', onTextDescriptionKeydown);
   clearForm();
 };
 
@@ -56,7 +66,7 @@ function onLoadButtonClose() {
 }
 
 const onDescriptionFocus = () => {
-  textDescription.addEventListener('keydown', addStopPropagation);
+  textDescription.addEventListener('keydown', onTextDescriptionKeydown);
 };
 
 const openModalForm = () => {
@@ -106,9 +116,9 @@ async function onSubmitForm(evt) {
   try {
     disableSubmitBtn();
     await postData(formDataObject);
-    onSuccesPost();
+    handleSuccesPost();
   } catch (error) {
-    onErrorPost();
+    handleErrorPost();
   } finally {
     enableSubmitBtn();
   }
@@ -155,13 +165,13 @@ const loadMessage = (response) => {
 
 };
 
-function onSuccesPost() {
+function handleSuccesPost() {
   closeImgRedactor();
   loadMessage(true);
   closeModalForm();
 }
 
-function onErrorPost() {
+function handleErrorPost() {
   loadMessage(false);
 }
 
