@@ -9,20 +9,20 @@ const RERENDER_DELAY = 500;
 
 const imgFilters = document.querySelector('.img-filters');
 
-const getAllPictures = (arr) => arr;
+const getAllPictures = (pictures) => pictures;
 
-const getRandomPictures = (arr) => {
+const getRandomPictures = (pictures) => {
   const uniqueValues = new Set();
-  arr.forEach(() => {
+  pictures.forEach(() => {
     if (uniqueValues.size < QUANITY_PICTURES) {
-      const randomValue = returnRandomElem(arr);
+      const randomValue = returnRandomElem(pictures);
       uniqueValues.add(randomValue);
     }
   });
   return Array.from(uniqueValues);
 };
 
-const getPopularPictures = (arr) => arr.slice().sort((a,b) => b.comments.length - a.comments.length);
+const getPopularPictures = (pictures) => pictures.slice().sort((previousElement,nextElement) => nextElement.comments.length - previousElement.comments.length);
 
 const getFilteredData = (data,button) => {
   if (button.id === 'filter-default') {
@@ -44,7 +44,7 @@ const setActiveFilterButton = (activeButton) => {
   activeButton.classList.add('img-filters__button--active');
 };
 
-const onImgFilters = (data) => {
+const onImgFiltersClick = (data) => {
   const debouncedFunction = debounce((button) => {
     const filteredData = getFilteredData(data, button);
     picturesApped(filteredData);
@@ -61,7 +61,7 @@ const onImgFilters = (data) => {
 };
 
 const addListener = (data) => {
-  imgFilters.addEventListener('click', onImgFilters(data));
+  imgFilters.addEventListener('click', onImgFiltersClick(data));
 };
 
 const loadFilter = (data) => {

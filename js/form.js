@@ -18,70 +18,70 @@ const uploadSubmitButton = imgUploadForm.querySelector('#upload-submit');
 const imgUploadFieldWrapper = imgUploadForm.querySelector('.img-upload__field-wrapper');
 
 const clearForm = () => {
-  imgUploadForm.removeEventListener('input',onSubmitButton);
+  imgUploadForm.removeEventListener('input',onImgUploadFormInput);
   closeImgRedactor();
   imgUploadForm.reset();
   clearValidation();
   imgUploadFieldWrapper.classList.remove('img-upload__field-wrapper--error');
 };
 
-const addStopPropagation = (evt) => {
-  if (isEscKey(evt)) {
-    evt.stopPropagation();
+const addStopPropagation = (event) => {
+  if (isEscKey(event)) {
+    event.stopPropagation();
   }
 };
 
-const onTextHashtagsKeydown = (evt) => {
-  addStopPropagation(evt);
+const onTextHashtagsKeydown = (event) => {
+  addStopPropagation(event);
+};
+
+const onTextDescriptionKeydown = (event) => {
+  addStopPropagation(event);
 };
 
 const onTextHashtagsFocus = () => {
   textHashtags.addEventListener('keydown', onTextHashtagsKeydown);
 };
 
-const onTextDescriptionKeydown = (evt) => {
-  addStopPropagation(evt);
+const onTextDescriptionFocus = () => {
+  textDescription.addEventListener('keydown', onTextDescriptionKeydown);
 };
 
 const closeModalForm = () => {
   body.classList.remove('modal-open');
   imgUploadOverlay.classList.add('hidden');
-  uploadCancelButton.removeEventListener('click', onLoadButtonClose);
-  document.removeEventListener('keydown', onLoadModalEscClose);
+  uploadCancelButton.removeEventListener('click', onUploadCancelButtonClick);
+  document.removeEventListener('keydown', onDocumentKeydownEsc);
   textHashtags.removeEventListener('focus', onTextHashtagsFocus);
-  textDescription.removeEventListener('focus', onTextHashtagsFocus);
+  textDescription.removeEventListener('focus', onTextDescriptionFocus);
   textHashtags.removeEventListener('keydown', onTextHashtagsKeydown);
   textDescription.removeEventListener('keydown', onTextDescriptionKeydown);
   clearForm();
 };
 
-function onLoadModalEscClose(evt) {
-  if (isEscKey(evt)) {
+function onDocumentKeydownEsc(event) {
+  if (isEscKey(event)) {
     closeModalForm();
   }
 }
 
-function onLoadButtonClose() {
+function onUploadCancelButtonClick() {
   closeModalForm();
 }
 
-const onDescriptionFocus = () => {
-  textDescription.addEventListener('keydown', onTextDescriptionKeydown);
-};
-
 const openModalForm = () => {
-  imgUploadForm.addEventListener('input',onSubmitButton);
-  imgUploadForm.addEventListener('submit',onSubmitForm);
+  imgUploadForm.addEventListener('input',onImgUploadFormInput);
+  imgUploadForm.addEventListener('submit',onImgUploadFormSubmit);
   imgUploadOverlay.classList.remove('hidden');
   body.classList.add('modal-open');
-  uploadCancelButton.addEventListener('click', onLoadButtonClose);
-  document.addEventListener('keydown', onLoadModalEscClose);
+  uploadCancelButton.addEventListener('click', onUploadCancelButtonClick);
+  document.addEventListener('keydown', onDocumentKeydownEsc);
   textHashtags.addEventListener('focus', onTextHashtagsFocus);
-  textDescription.addEventListener('focus', onDescriptionFocus);
+  textDescription.addEventListener('focus', onTextDescriptionFocus);
   addImgRedactor();
 };
 
-const onFormChange = () => {
+const onImgUploadFormChange = () => {
   openModalForm();
 };
 
@@ -106,13 +106,13 @@ const getFormData = (form) => {
   return formData;
 };
 
-function onSubmitButton() {
+function onImgUploadFormInput() {
   validateForm(pristine.validate());
 }
 
-async function onSubmitForm(evt) {
-  evt.preventDefault();
-  const formDataObject = getFormData(evt.target);
+async function onImgUploadFormSubmit(event) {
+  event.preventDefault();
+  const formDataObject = getFormData(event.target);
   try {
     disableSubmitBtn();
     await postData(formDataObject);
@@ -127,7 +127,7 @@ async function onSubmitForm(evt) {
 const loadForm = () => {
   loadValidation();
   imgLoader();
-  imgUploadForm.addEventListener('change',onFormChange);
+  imgUploadForm.addEventListener('change',onImgUploadFormChange);
 };
 
 const loadMessage = (response) => {
@@ -136,32 +136,34 @@ const loadMessage = (response) => {
   const notification = template.cloneNode(true);
 
   const closeMessages = () => {
-    body.classList.remove('modal-open');
-    notification.removeEventListener('click', onButtonMessagge);
-    document.addEventListener('keydown', onLoadModalEscClose);
-    document.removeEventListener('keydown', onMessagesEscClose);
+    if (imgUploadOverlay.classList.contains('hidden')) {
+      body.classList.remove('modal-open');
+    }
+    notification.removeEventListener('click', onNotificationClick);
+    document.addEventListener('keydown', onDocumentKeydownEsc);
+    document.removeEventListener('keydown', onDocumentKeydownEscMessage);
     notification.remove();
   };
 
-  function onMessagesEscClose(evt) {
-    if (isEscKey(evt) && notification.isConnected) {
+  function onDocumentKeydownEscMessage(event) {
+    if (isEscKey(event) && notification.isConnected) {
       closeMessages();
     }
   }
 
-  function onButtonMessagge(evt) {
-    const button = evt.target.closest(`button.${result}__button`);
-    const inner = evt.target.closest(`.${result}__inner`);
+  function onNotificationClick(event) {
+    const button = event.target.closest(`button.${result}__button`);
+    const inner = event.target.closest(`.${result}__inner`);
     if (!inner || button) {
       closeMessages();
     }
   }
 
-  body.classList.add('modal-open');
-  notification.addEventListener('click', onButtonMessagge);
-  document.removeEventListener('keydown', onLoadModalEscClose);
-  document.addEventListener('keydown', onMessagesEscClose);
+  notification.addEventListener('click', onNotificationClick);
+  document.removeEventListener('keydown', onDocumentKeydownEsc);
+  document.addEventListener('keydown', onDocumentKeydownEscMessage);
   body.insertAdjacentElement('beforeBegin', notification);
+  body.classList.add('modal-open');
 
 };
 

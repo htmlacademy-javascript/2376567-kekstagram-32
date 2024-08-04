@@ -77,60 +77,60 @@ const effects = {
   },
 };
 
-const disableScaleControlButton = (val) => {
-  if (val <= MIN_ZOOM_SCALE) {
+const disableScaleControlButton = (value) => {
+  if (value <= MIN_ZOOM_SCALE) {
     scaleControlSmaller.setAttribute('disabled', true);
   } else {
     scaleControlSmaller.removeAttribute('disabled');
   }
 
-  if (val >= MAX_ZOOM_SCALE) {
+  if (value >= MAX_ZOOM_SCALE) {
     scaleControlBigger.setAttribute('disabled', true);
   } else {
     scaleControlBigger.removeAttribute('disabled');
   }
 };
 
-const onImgUploadScale = (val) => function scaleControler(evt) {
-  if (evt.target.classList.contains('scale__control--smaller')) {
-    val = Math.max(val - STEP_ZOOM_SCALE, MIN_ZOOM_SCALE);
+const onImgUploadScaleClick = (value) => function controlScale(event) {
+  if (event.target.classList.contains('scale__control--smaller')) {
+    value = Math.max(value - STEP_ZOOM_SCALE, MIN_ZOOM_SCALE);
   }
-  if (evt.target.classList.contains('scale__control--bigger')) {
-    val = Math.min(val + STEP_ZOOM_SCALE, MAX_ZOOM_SCALE);
+  if (event.target.classList.contains('scale__control--bigger')) {
+    value = Math.min(value + STEP_ZOOM_SCALE, MAX_ZOOM_SCALE);
   }
-  disableScaleControlButton(val);
-  imgUploadPreview.style.transform = `scale(${val / DENOM_ZOOM_SCALE})`;
-  scaleControlValue.value = `${val}%`;
+  disableScaleControlButton(value);
+  imgUploadPreview.style.transform = `scale(${value / DENOM_ZOOM_SCALE})`;
+  scaleControlValue.value = `${value}%`;
 };
 
 const changeScale = () => {
   const value = parseInt(scaleControlValue.value, 10);
   disableScaleControlButton(value);
-  imgUploadScale.addEventListener('click', onImgUploadScale(value));
+  imgUploadScale.addEventListener('click', onImgUploadScaleClick(value));
 };
 
-const onChangeEffectPhoto = (evt) => {
-  evt.stopPropagation();
+const onEffectsListChange = (event) => {
+  event.stopPropagation();
 
-  if (evt.target.value === 'none') {
+  if (event.target.value === 'none') {
     sliderContainer.classList.add('hidden');
     imgUploadPreview.style.filter = null;
   } else {
     sliderContainer.classList.remove('hidden');
     sliderElement.noUiSlider.updateOptions({
       range: {
-        min: effects[evt.target.value].min,
-        max: effects[evt.target.value].max,
+        min: effects[event.target.value].min,
+        max: effects[event.target.value].max,
       },
-      start: effects[evt.target.value].start,
-      step: effects[evt.target.value].step,
+      start: effects[event.target.value].start,
+      step: effects[event.target.value].step,
     });
 
     sliderElement.noUiSlider.on('update', () => {
       valueElement.value = sliderElement.noUiSlider.get();
 
-      const effectValue = effects[evt.target.value].filter;
-      const unit = effects[evt.target.value].unit;
+      const effectValue = effects[event.target.value].filter;
+      const unit = effects[event.target.value].unit;
 
       imgUploadPreview.style.filter = `${effectValue}(${valueElement.value}${unit})`;
     });
@@ -159,7 +159,7 @@ const addSlider = () => {
       },
     },
   });
-  effectsList.addEventListener('change', onChangeEffectPhoto);
+  effectsList.addEventListener('change', onEffectsListChange);
 };
 
 const addImgRedactor = () => {
@@ -175,8 +175,8 @@ const closeImgRedactor = () => {
     sliderElement.noUiSlider.destroy();
   }
   imgUploadPreview.style = '';
-  effectsList.removeEventListener('change', onChangeEffectPhoto);
-  imgUploadScale.removeEventListener('click', onImgUploadScale);
+  effectsList.removeEventListener('change', onEffectsListChange);
+  imgUploadScale.removeEventListener('click', onImgUploadScaleClick);
 };
 
 export {

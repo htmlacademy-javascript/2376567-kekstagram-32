@@ -51,7 +51,7 @@ const showComments = (id) => {
   commentsList[id].classList.remove('hidden');
 };
 
-const getNumberOfItems = (elem, clss) => Array.from(elem).filter((comment) => comment.classList.contains(clss) && comment.classList.length === 1).length;
+const getNumberOfItems = (element, itemClass) => Array.from(element).filter((comment) => comment.classList.contains(itemClass) && comment.classList.length === 1).length;
 
 const renderComments = (data,index) => {
   const dataAvatarPath = data[index]?.comments[getRandomInt(0,data[index]?.comments.length)]?.avatar;
@@ -103,7 +103,7 @@ const clearComments = () => {
   visibleComments = 5;
 };
 
-function onButtonCommentsLoader() {
+function onButtonCommentsLoaderClick() {
   showNextComments();
 }
 
@@ -117,37 +117,37 @@ const handlePictureClick = (event, data) => {
     renderSocials(data, id);
     renderComments(data, id);
     body.classList.add('modal-open');
-    document.addEventListener('keydown', onDocumentPictureCancel);
-    pictureCancel.addEventListener('click', onPictureCancel);
-    buttonCommentsLoader.addEventListener('click', onButtonCommentsLoader);
+    document.addEventListener('keydown', onDocumentKeydown);
+    pictureCancel.addEventListener('click', onPictureCancelClick);
+    buttonCommentsLoader.addEventListener('click', onButtonCommentsLoaderClick);
   }
 };
 
-const onPicturesContainer = (event) => handlePictureClick(event, currentData);
+const onPicturesContainerClick = (event) => handlePictureClick(event, currentData);
 
 const closeModal = () => {
   body.classList.remove('modal-open');
   bigPicture.classList.add('hidden');
-  document.removeEventListener('keydown', onDocumentPictureCancel);
-  pictureCancel.removeEventListener('click', onPictureCancel);
-  buttonCommentsLoader.removeEventListener('click', onButtonCommentsLoader);
+  document.removeEventListener('keydown', onDocumentKeydown);
+  pictureCancel.removeEventListener('click', onPictureCancelClick);
+  buttonCommentsLoader.removeEventListener('click', onButtonCommentsLoaderClick);
   clearComments();
 };
 
-function onPictureCancel() {
+function onPictureCancelClick() {
   closeModal();
 }
 
-function onDocumentPictureCancel(evt) {
-  if (isEscKey(evt)) {
+function onDocumentKeydown(event) {
+  if (isEscKey(event)) {
     closeModal();
   }
 }
 
 const loadModal = (data) => {
   currentData = data;
-  picturesContainer.removeEventListener('click', onPicturesContainer);
-  picturesContainer.addEventListener('click', onPicturesContainer);
+  picturesContainer.removeEventListener('click', onPicturesContainerClick);
+  picturesContainer.addEventListener('click', onPicturesContainerClick);
 };
 
 export { loadModal };
