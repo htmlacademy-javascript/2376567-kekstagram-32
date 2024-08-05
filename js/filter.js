@@ -22,7 +22,7 @@ const getRandomPictures = (pictures) => {
   return Array.from(uniqueValues);
 };
 
-const getPopularPictures = (pictures) => pictures.slice().sort((previousElement,nextElement) => nextElement.comments.length - previousElement.comments.length);
+const getPopularPictures = (pictures) => pictures.slice().sort((elementA,elementB) => elementB.comments.length - elementA.comments.length);
 
 const getFilteredData = (data,button) => {
   if (button.id === 'filter-default') {
