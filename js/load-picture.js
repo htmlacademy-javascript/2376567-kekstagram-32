@@ -1,7 +1,8 @@
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+
 const inputUploadFile = document.querySelector('#upload-file');
 const previewPicture = document.querySelector('.img-upload__preview>img');
 const effectsPreview = document.querySelectorAll('.effects__preview');
-const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
 const imgLoader = () => {
   inputUploadFile.addEventListener('change', () => {
